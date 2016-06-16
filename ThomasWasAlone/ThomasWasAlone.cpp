@@ -24,6 +24,8 @@ int main()
 		cout << "Failed to init game"<<'\n';
 	}
 
+	game.loop();
+
 	game.destroy();
 
     return 0;

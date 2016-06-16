@@ -5,8 +5,13 @@ using namespace std;
 #define SDL_MAIN_HANDLED
 #include "SDL.h"
 
+#include "LTimer.h"
 #include "Renderer.h"
 #include "Game.h"
+
+
+const int SCREEN_FPS = 100;
+const int SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
 
 
 Game::Game()
@@ -60,4 +65,45 @@ void Game::destroy()
 	SDL_DestroyWindow(window);
 }
 
+//** calls update on all game entities*/
+void Game::update()
+{
+}
 
+//** calls render on all game entities*/
+
+void Game::render()
+{
+	cout << "render"<< endl;
+}
+
+/** update and render game entities*/
+void Game::loop()
+{
+	LTimer capTimer;//to cap framerate
+	bool quit = false;
+	SDL_Event e;
+	while (!quit) {
+		capTimer.start();
+
+		while (SDL_PollEvent(&e) != 0)
+		{
+			//User requests quit
+			if (e.type == SDL_QUIT)
+			{
+				quit = true;
+			}
+		}
+		//check for exit
+
+		update();
+		render();
+
+		int frameTicks = capTimer.getTicks();
+		if (frameTicks < SCREEN_TICKS_PER_FRAME)
+		{
+			//Wait remaining time
+			SDL_Delay(SCREEN_TICKS_PER_FRAME - frameTicks);
+		}
+	}
+}

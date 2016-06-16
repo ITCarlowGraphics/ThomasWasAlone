@@ -14,6 +14,8 @@ public:
 	bool init();
 	void destroy();
 
-
+	void update();
+	void render();
+	void loop();
 };
 
