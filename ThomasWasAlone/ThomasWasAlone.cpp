@@ -6,8 +6,12 @@
 using namespace std;
 
 #define SDL_MAIN_HANDLED
-#include "SDL.h"
 
+#ifdef __APPLE__
+    #include "SDL2/SDL.h"
+#elif _WIN64
+    #include "SDL.h"
+#endif
 
 #include "Game.h"
 

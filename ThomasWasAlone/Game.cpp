@@ -3,7 +3,12 @@
 #include <iostream>
 using namespace std;
 #define SDL_MAIN_HANDLED
+#ifdef __APPLE__
+#include "SDL2/SDL.h"
+#elif _WIN64
 #include "SDL.h"
+#endif
+
 
 #include "LTimer.h"
 #include "Renderer.h"

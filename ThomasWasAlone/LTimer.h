@@ -1,5 +1,10 @@
 #pragma once
+#ifdef __APPLE__
+#include "SDL2/SDL.h"
+#elif _WIN64
 #include "SDL.h"
+#endif
+
 //from  http://lazyfoo.net/tutorials/SDL/23_advanced_timers/
 // will be used for regulating FPS
 
