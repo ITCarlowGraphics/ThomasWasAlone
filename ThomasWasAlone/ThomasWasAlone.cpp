@@ -9,7 +9,7 @@ using namespace std;
 
 #ifdef __APPLE__
     #include "SDL2/SDL.h"
-#elif _WIN64
+#elif _WIN32
     #include "SDL.h"
 #endif
 

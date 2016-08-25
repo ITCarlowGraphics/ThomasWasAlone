@@ -5,7 +5,7 @@ using namespace std;
 #define SDL_MAIN_HANDLED
 #ifdef __APPLE__
 #include "SDL2/SDL.h"
-#elif _WIN64
+#elif _WIN32
 #include "SDL.h"
 #endif
 
