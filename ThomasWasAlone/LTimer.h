@@ -1,7 +1,7 @@
 #pragma once
 #ifdef __APPLE__
 #include "SDL2/SDL.h"
-#elif _WIN32
+#elif defined(_WIN64) || defined(_WIN32)
 #include "SDL.h"
 #endif
 
