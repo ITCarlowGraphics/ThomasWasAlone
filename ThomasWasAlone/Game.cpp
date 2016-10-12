@@ -10,8 +10,9 @@ using namespace std;
 #endif
 
 
+
 #include "LTimer.h"
-#include "Renderer.h"
+#include "Box.h"
 #include "Game.h"
 
 
@@ -58,14 +59,33 @@ bool Game::init() {
 		cout << "Could not create renderer: " << SDL_GetError() << std::endl;
 		return false;
 	}
+	renderer.init(sdl_renderer);
 
+
+	//create some game objects
+
+	Box* box1 = new Box(Rect(50,50,30,40));
+	box1->angVel = 0.5f;//radian per seconds	
+	Box* box2 = new Box(Rect(50, 50, 30, 40));
+	box2->angVel = -0.85f;//radian per seconds	
+
+	gameObjects.push_back(box1);
+	gameObjects.push_back(box2);
 
 	return true;
+	lastTime = SDL_GetTicks();
+
 }
 
 /**Destroys SDL_Window and SDL_Renderer*/
 void Game::destroy()
 {
+	//empty out the game object vector
+	for (std::vector<GameObject*>::iterator i = gameObjects.begin(); i != gameObjects.end(); i++) {
+		delete *i;
+	}
+	gameObjects.clear();
+
 	SDL_DestroyRenderer(sdl_renderer);
 	SDL_DestroyWindow(window);
 }
@@ -73,13 +93,35 @@ void Game::destroy()
 //** calls update on all game entities*/
 void Game::update()
 {
+	unsigned int currentTime = SDL_GetTicks();
+	unsigned int deltaTime = currentTime - lastTime;
+
+	for (std::vector<GameObject*>::iterator i = gameObjects.begin(); i != gameObjects.end(); i++) {
+		(*i)->Update(deltaTime);
+	}
+
+
+	lastTime = currentTime;
 }
 
 //** calls render on all game entities*/
 
 void Game::render()
 {
-	cout << "render"<< endl;
+
+
+	SDL_Color clear_col = { 0,0,0,255 };
+
+	renderer.clear(clear_col);
+
+	for (std::vector<GameObject*>::iterator i = gameObjects.begin(); i != gameObjects.end(); i++) {
+		(*i)->Render(renderer);
+	}
+
+
+	renderer.present();// display the new frame
+
+
 }
 
 /** update and render game entities*/
