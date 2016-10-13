@@ -1,4 +1,5 @@
 #pragma once
+#define SDL_MAIN_HANDLED
 #ifdef __APPLE__
 #include "SDL2/SDL.h"
 #elif defined(_WIN64) || defined(_WIN32)
@@ -49,6 +50,8 @@ public:
 	//Checks the status of the timer
 	bool isStarted();
 	bool isPaused();
+
+	static unsigned int gameTime() { return SDL_GetTicks(); }
 
 private:
 	//The clock time when the timer started

@@ -14,35 +14,101 @@ using namespace std;
 
 
 
-Renderer::Renderer():renderer(NULL)
+Renderer::Renderer():sdl_renderer(NULL)
 {
 	
 }
 
-void Renderer::init(SDL_Renderer *r) {
-	renderer = r;
+bool Renderer::init(Size2D& winSize,char* title) {
+
+	int e=SDL_Init(SDL_INIT_EVERYTHING);              // Initialize SDL2
+	windowSize = winSize;
+	if (e != 0) {
+		// problem with SDL?...
+		cout << "Could not init SDL: " << SDL_GetError() << std::endl;
+		return false;
+	}
+
+	// Create an application window with the following settings:
+	window = SDL_CreateWindow(
+		title,                  // window title
+		SDL_WINDOWPOS_UNDEFINED,           // initial x position
+		SDL_WINDOWPOS_UNDEFINED,           // initial y position
+		winSize.w,                              // width, in pixels
+		winSize.h,                               // height, in pixels
+		SDL_WINDOW_OPENGL                  // flags - see below
+	);
+
+	// Check that the window was successfully created
+	if (window == NULL) {
+		// In the case that the window could not be made...
+		cout << "Could not create window: " << SDL_GetError() << std::endl;
+		return false;
+	}
+
+	sdl_renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+	if (sdl_renderer == NULL) {
+		// In the case that the renderer could not be made...
+		cout << "Could not create renderer: " << SDL_GetError() << std::endl;
+		return false;
+	}
+
 }
 
 void Renderer::drawRect(Rect& r, Colour& c) {
-	SDL_SetRenderDrawColor(renderer, c.r, c.g, c.b, c.a);
+	SDL_SetRenderDrawColor(sdl_renderer, c.r, c.g, c.b, c.a);
 	SDL_Rect sr;
 	sr.h = (int)r.size.h;
 	sr.w = (int)r.size.w;
 	sr.x = (int)r.pos.x;
 	sr.y = (int)r.pos.y;
-	SDL_RenderFillRect(renderer, &sr);
+	SDL_RenderFillRect(sdl_renderer, &sr);
 
+}
+
+void Renderer::drawWorldRect(Rect &r, Colour &c)
+{
+	drawRect(worldToScreen(r),c);
 }
 
 void Renderer::present() {
-	SDL_RenderPresent(renderer);
+	SDL_RenderPresent(sdl_renderer);
 }
 
-void Renderer::clear(SDL_Color& col) {
-	SDL_SetRenderDrawColor(renderer, col.r, col.g, col.b, col.a);
-	SDL_RenderClear(renderer);
+void Renderer::clear(Colour& col) {
+	SDL_SetRenderDrawColor(sdl_renderer, col.r, col.g, col.b, col.a);
+	SDL_RenderClear(sdl_renderer);
 
 }
+Point2D Renderer::worldToScreen(Point2D &p)
+{
+	float vpTop = viewportBottomLeft.y + viewportSize.h;
+	float x = (p.x - viewportBottomLeft.x)* windowSize.w / viewportSize.w;
+	float y = (vpTop- p.y)* windowSize.h / viewportSize.h;
+	
+	return Point2D(x,y);
+}
+Rect Renderer::worldToScreen(Rect &r)
+{
+	Point2D p = worldToScreen(r.pos);
+	float sw = r.size.w*(windowSize.w / viewportSize.w);
+	float sh = -r.size.h*(windowSize.h / viewportSize.h);
+
+	return Rect(p,Size2D(sw,sh));
+}
+void Renderer::setViewPort(Rect &r)
+{
+	viewportBottomLeft = r.pos;
+	viewportSize=r.size;
+}
+
+
+/**Destroys SDL_Window and SDL_Renderer*/
+void Renderer::destroy() {
+	SDL_DestroyRenderer(sdl_renderer);
+	SDL_DestroyWindow(window);
+}
+
 Renderer::~Renderer()
 {
 }

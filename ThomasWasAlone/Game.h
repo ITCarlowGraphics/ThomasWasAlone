@@ -8,8 +8,6 @@
 
 class Game
 {
-	SDL_Window *window;                    
-	SDL_Renderer *sdl_renderer;
 
 	Renderer renderer;
 

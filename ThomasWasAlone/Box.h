@@ -3,13 +3,13 @@
 #include "GameObject.h"
 #include "BasicTypes.h"
 
-class Box:public GameObject
+class SpinningBox:public GameObject
 {
 	
 public:
-	Box(Rect r) :rect(r) { angle = angVel = .0f; };
-	Box();
-	~Box();
+	SpinningBox(Rect r) :rect(r) { angle = angVel = .0f; };
+	SpinningBox();
+	~SpinningBox();
 
 	Rect rect;
 	Colour col;

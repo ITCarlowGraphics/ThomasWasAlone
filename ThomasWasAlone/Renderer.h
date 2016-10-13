@@ -1,21 +1,41 @@
 #pragma once
+#define SDL_MAIN_HANDLED
 #ifdef __APPLE__
 #include "SDL2/SDL.h"
 #elif defined(_WIN64) || defined(_WIN32)
 #include "SDL.h"
 #endif
 
+
 #include "BasicTypes.h"
 
+
+//Responsible for all drawing operations
+//abstracts away specfic SDL specific drawing functions
 class Renderer{
-	SDL_Renderer *renderer;
+
+	// size of window in pixels
+	Size2D windowSize;
+	//position of window in world coordinates
+	//change these if you want to zoom or pan
+	Point2D viewportBottomLeft;
+	Size2D viewportSize;
+	SDL_Window *window;
+	SDL_Renderer *sdl_renderer;
 
 public:
 	Renderer();
-	void init(SDL_Renderer * r);
+	bool init(Size2D&, char*);
 	void drawRect(Rect&, Colour&);
+	void drawWorldRect(Rect&, Colour&);
 	void present();
-	void clear(SDL_Color&);
+	void clear(Colour&);
+	Point2D worldToScreen(Point2D&);
+	Rect worldToScreen(Rect&);
+
+	void setViewPort(Rect&);
+
+	void destroy();
 	~Renderer();
 };
 

@@ -3,22 +3,24 @@
 #include "Box.h"
 
 
-Box::Box()
+SpinningBox::SpinningBox()
 {
 }
 
-Box::~Box()
+SpinningBox::~SpinningBox()
 {
 }
 
-void Box::Render(Renderer& r) {
-	r.drawRect(rect,col);
+void SpinningBox::Render(Renderer& r) {
+	r.drawWorldRect(rect,col);
 }
-void Box::Update(unsigned int deltaTime) {
+void SpinningBox::Update(unsigned int deltaTime) {
 
-	float radius = rect.pos.length();
-	angle += angVel*deltaTime/1000;
-	rect.pos.x = radius*(float)cos(angle);
-	rect.pos.y = radius*(float)sin(angle);
+	float angle = angVel*deltaTime/1000;
+	Point2D p = rect.pos;//current position
+	
+	//apply a rotation about the origin transform
+	rect.pos.x = (float)cos(angle)*p.x- (float)sin(angle)*p.y;
+	rect.pos.y = (float)sin(angle)*p.x + (float)cos(angle)*p.y;
 
 }
