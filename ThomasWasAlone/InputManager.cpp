@@ -28,7 +28,7 @@ void InputManager::Dispatch(EventListener::Event evt)
 	if (listeners.find(evt) != listeners.end()) {
 		
 		for (auto const &listener : *listeners[evt]) { //go through all listeners for this event
-			listener->OnEvent(evt); //Call on event for the listener
+			listener->onEvent(evt); //Call on event for the listener
 
 		}
 	}

@@ -20,6 +20,8 @@ class Renderer{
 	//change these if you want to zoom or pan
 	Point2D viewportBottomLeft;
 	Size2D viewportSize;
+
+
 	SDL_Window *window;
 	SDL_Renderer *sdl_renderer;
 

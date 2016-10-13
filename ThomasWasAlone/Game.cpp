@@ -6,9 +6,9 @@ using namespace std;
 
 
 #include "LTimer.h"
-#include "Box.h"
+#include "SpinningBox.h"
 #include "Game.h"
-#include "InputManager.h"
+
 
 const int SCREEN_FPS = 100;
 const int SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
@@ -16,6 +16,8 @@ const int SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
 
 Game::Game()
 {
+	pause = false;
+	quit = false;
 }
 
 
@@ -24,14 +26,11 @@ Game::~Game()
 }
 
 
-bool Game::init() {
-
-
-	
+bool Game::init() {	
 	Size2D winSize(800,600);
 
-	//creates our renderer, which looks after drawnig and the window
-	renderer.init(winSize,"Thomas was alone");
+	//creates our renderer, which looks after drawing and the window
+	renderer.init(winSize,"Simple SDL App");
 
 	//set up the viewport
 	//we want the vp centred on origin and 20 units wide
@@ -46,7 +45,7 @@ bool Game::init() {
 
 	//create some game objects
 
-	SpinningBox* box1 = new SpinningBox(Rect(5,0,4,0.2));
+	SpinningBox* box1 = new SpinningBox(Rect(5,0,4,0.2f));
 	box1->col = Colour(255, 255, 0);
 	box1->angVel = 0.5f;//radian per seconds	
 	SpinningBox* box2 = new SpinningBox(Rect(5, 0, 1, 1));
@@ -66,6 +65,7 @@ bool Game::init() {
 	box6->col = Colour(255, 100, 0);//orange
 
 
+	//add out boxes to the gameworld
 	gameObjects.push_back(box1);
 	gameObjects.push_back(box2);
 	gameObjects.push_back(box3);
@@ -75,6 +75,13 @@ bool Game::init() {
 
 	
 	lastTime = LTimer::gameTime();
+
+	//we want this box to respond to REVERSE event
+	inputManager.AddListener(EventListener::Event::REVERSE, box1);
+
+	//want game loop to pause
+	inputManager.AddListener(EventListener::Event::PAUSE, this);
+
 	return true;
 
 }
@@ -87,7 +94,6 @@ void Game::destroy()
 		delete *i;
 	}
 	gameObjects.clear();
-
 	renderer.destroy();
 }
 
@@ -95,13 +101,14 @@ void Game::destroy()
 void Game::update()
 {
 	unsigned int currentTime = LTimer::gameTime();//millis since game started
-	unsigned int deltaTime = currentTime - lastTime;
+	unsigned int deltaTime = currentTime - lastTime;//time since last update
 
+	//call update on all game objects
 	for (std::vector<GameObject*>::iterator i = gameObjects.begin(); i != gameObjects.end(); i++) {
 		(*i)->Update(deltaTime);
 	}
 
-
+	//save the curent time for next frame
 	lastTime = currentTime;
 }
 
@@ -109,19 +116,14 @@ void Game::update()
 
 void Game::render()
 {
-
-
-	Colour black(0,0,0);
-
-	renderer.clear(black);// prepare for new frame
+	renderer.clear(Colour(0,0,0));// prepare for new frame
 	
 	//render every object
 	for (std::vector<GameObject*>::iterator i = gameObjects.begin(), e= gameObjects.end(); i != e; i++) {
 		(*i)->Render(renderer);
 	}
 
-	//renderer.drawRect(Rect(100, 100, 50, 50), Colour(255, 100, 50));
-	renderer.present();// display the new frame
+	renderer.present();// display the new frame (swap buffers)
 
 	
 }
@@ -130,25 +132,34 @@ void Game::render()
 void Game::loop()
 {
 	LTimer capTimer;//to cap framerate
-	bool quit = false;
-	
-	
-	InputManager inputManager;
 
 	int frameNum = 0;
-	while (!quit) {
+	while (!quit) { //game loop
 		capTimer.start();
 
 		inputManager.ProcessInput();
 
-		update();
+		if(!pause) //in pause mode don't bother updateing
+			update();
 		render();
 
-		int frameTicks = capTimer.getTicks();
+		int frameTicks = capTimer.getTicks();//time since start of frame
 		if (frameTicks < SCREEN_TICKS_PER_FRAME)
 		{
-			//Wait remaining time
+			//Wait remaining time before going to next frame
 			SDL_Delay(SCREEN_TICKS_PER_FRAME - frameTicks);
 		}
 	}
+}
+
+void Game::onEvent(EventListener::Event evt) {
+
+	if (evt == EventListener::Event::PAUSE) {
+		pause = !pause;
+	}
+	
+	if (evt == EventListener::Event::QUIT) {
+		quit=true;
+	}
+
 }

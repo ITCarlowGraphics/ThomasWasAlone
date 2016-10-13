@@ -1,15 +1,17 @@
 #pragma once
 
+
+//Define some basic types needed for 2D graphics
+
+
 class Point2D {
 public:
 	float x, y;
 	Point2D(float _x = 0, float _y = 0) :x(_x), y(_y) { };
 	float length() { return (float)sqrt(x*x + y*y); };
-	
-	//const Point2D operator+(const Size2D&);
+
 };
 
-//const Point2D Point2D::operator+(const Size2D& s) { return Point2D(x + s.w, y + s.h); }
 
 class Size2D {
 public:

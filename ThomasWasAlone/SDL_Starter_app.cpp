@@ -1,13 +1,9 @@
-// ThomasWasAlone.cpp : Defines the entry point for the console application.
+//  Defines the entry point for the console application.
 //
 #include "stdafx.h"
 
 #include <iostream>
 using namespace std;
-
-#define SDL_MAIN_HANDLED
-
-
 #include "Game.h"
 
 
@@ -23,6 +19,7 @@ int main()
 		cout << "Failed to init game"<<'\n';
 	}
 
+	//run the game loop
 	game.loop();
 
 	game.destroy();

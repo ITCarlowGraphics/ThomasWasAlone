@@ -34,8 +34,8 @@ bool Renderer::init(Size2D& winSize,char* title) {
 		title,                  // window title
 		SDL_WINDOWPOS_UNDEFINED,           // initial x position
 		SDL_WINDOWPOS_UNDEFINED,           // initial y position
-		winSize.w,                              // width, in pixels
-		winSize.h,                               // height, in pixels
+		(int)winSize.w,                              // width, in pixels
+		(int)winSize.h,                               // height, in pixels
 		SDL_WINDOW_OPENGL                  // flags - see below
 	);
 
@@ -55,6 +55,7 @@ bool Renderer::init(Size2D& winSize,char* title) {
 
 }
 
+//draw a rect in pixel coordinates
 void Renderer::drawRect(Rect& r, Colour& c) {
 	SDL_SetRenderDrawColor(sdl_renderer, c.r, c.g, c.b, c.a);
 	SDL_Rect sr;
@@ -66,12 +67,13 @@ void Renderer::drawRect(Rect& r, Colour& c) {
 
 }
 
+//draw a rectin world coordinates
 void Renderer::drawWorldRect(Rect &r, Colour &c)
 {
 	drawRect(worldToScreen(r),c);
 }
 
-void Renderer::present() {
+void Renderer::present() { //swap buffers
 	SDL_RenderPresent(sdl_renderer);
 }
 

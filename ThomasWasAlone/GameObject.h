@@ -5,7 +5,7 @@
 
 
 
-
+/*Base class for all in game objects*/
 class GameObject
 {
 
