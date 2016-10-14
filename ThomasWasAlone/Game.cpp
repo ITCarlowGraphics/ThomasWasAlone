@@ -81,6 +81,7 @@ bool Game::init() {
 
 	//want game loop to pause
 	inputManager.AddListener(EventListener::Event::PAUSE, this);
+	inputManager.AddListener(EventListener::Event::QUIT, this);
 
 	return true;
 

@@ -27,15 +27,15 @@ class Renderer{
 
 public:
 	Renderer();
-	bool init(Size2D&, char*);
-	void drawRect(Rect&, Colour&);
-	void drawWorldRect(Rect&, Colour&);
+	bool init(const Size2D&, const char*);
+	void drawRect(const Rect&, const Colour&);
+	void drawWorldRect(const Rect&, const Colour&);
 	void present();
-	void clear(Colour&);
-	Point2D worldToScreen(Point2D&);
-	Rect worldToScreen(Rect&);
+	void clear(const Colour&);
+	Point2D worldToScreen(const Point2D&);
+	Rect worldToScreen(const Rect&);
 
-	void setViewPort(Rect&);
+	void setViewPort(const Rect&);
 
 	void destroy();
 	~Renderer();

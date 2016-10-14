@@ -19,7 +19,7 @@ Renderer::Renderer():sdl_renderer(NULL)
 	
 }
 
-bool Renderer::init(Size2D& winSize,char* title) {
+bool Renderer::init(const Size2D& winSize,const char* title) {
 
 	int e=SDL_Init(SDL_INIT_EVERYTHING);              // Initialize SDL2
 	windowSize = winSize;
@@ -52,11 +52,12 @@ bool Renderer::init(Size2D& winSize,char* title) {
 		cout << "Could not create renderer: " << SDL_GetError() << std::endl;
 		return false;
 	}
-
+	
+	return true;
 }
 
 //draw a rect in pixel coordinates
-void Renderer::drawRect(Rect& r, Colour& c) {
+void Renderer::drawRect(const Rect& r, const Colour& c) {
 	SDL_SetRenderDrawColor(sdl_renderer, c.r, c.g, c.b, c.a);
 	SDL_Rect sr;
 	sr.h = (int)r.size.h;
@@ -68,7 +69,7 @@ void Renderer::drawRect(Rect& r, Colour& c) {
 }
 
 //draw a rectin world coordinates
-void Renderer::drawWorldRect(Rect &r, Colour &c)
+void Renderer::drawWorldRect(const Rect &r, const Colour &c)
 {
 	drawRect(worldToScreen(r),c);
 }
@@ -77,12 +78,12 @@ void Renderer::present() { //swap buffers
 	SDL_RenderPresent(sdl_renderer);
 }
 
-void Renderer::clear(Colour& col) {
+void Renderer::clear(const Colour& col) {
 	SDL_SetRenderDrawColor(sdl_renderer, col.r, col.g, col.b, col.a);
 	SDL_RenderClear(sdl_renderer);
 
 }
-Point2D Renderer::worldToScreen(Point2D &p)
+Point2D Renderer::worldToScreen(const Point2D &p)
 {
 	float vpTop = viewportBottomLeft.y + viewportSize.h;
 	float x = (p.x - viewportBottomLeft.x)* windowSize.w / viewportSize.w;
@@ -90,7 +91,7 @@ Point2D Renderer::worldToScreen(Point2D &p)
 	
 	return Point2D(x,y);
 }
-Rect Renderer::worldToScreen(Rect &r)
+Rect Renderer::worldToScreen(const Rect &r)
 {
 	Point2D p = worldToScreen(r.pos);
 	float sw = r.size.w*(windowSize.w / viewportSize.w);
@@ -98,7 +99,7 @@ Rect Renderer::worldToScreen(Rect &r)
 
 	return Rect(p,Size2D(sw,sh));
 }
-void Renderer::setViewPort(Rect &r)
+void Renderer::setViewPort(const Rect &r)
 {
 	viewportBottomLeft = r.pos;
 	viewportSize=r.size;
